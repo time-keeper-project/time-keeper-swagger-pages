@@ -10,7 +10,7 @@ externalDocs:
 servers:
 - url: http://localhost:8000/api
   description: 로컬 개발용
-- url: https://gyubuntu.duckdns.org/time-keeper
+- url: https://gyubuntu.duckdns.org/time-keeper/api
   description: 배포 서버용
 security:
 - Bearer Authentication: []
