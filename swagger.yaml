@@ -17,6 +17,8 @@ security:
 tags:
 - name: 태그
   description: 태그 관련 API
+- name: 태스크
+  description: 태스크 관련 임시 API
 - name: 월간 메모
   description: 월간 메모 관련 API
 - name: 루틴
@@ -24,6 +26,28 @@ tags:
 - name: 스케줄
   description: 스케줄 관련 API
 paths:
+  "/task/{id}/complete":
+    put:
+      tags:
+      - 태스크
+      summary: 일정 완료 상태 토글
+      description: 지정한 ID의 일정 완료 상태를 토글합니다. (완료 ↔ 미완료)
+      operationId: completeTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiString"
+      security: []
   "/schedule/{id}/update":
     put:
       tags:
@@ -73,6 +97,53 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/ApiString"
+      security: []
+  "/routine/{id}/update":
+    put:
+      tags:
+      - 루틴
+      summary: 루틴 수정
+      description: 기존 루틴을 수정합니다.
+      operationId: updateRoutine
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/RoutineRequest"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiRoutineResponse"
+      security: []
+  "/task/create":
+    post:
+      tags:
+      - 태스크
+      operationId: createTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/TaskRequest"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiTaskResponse"
       security: []
   "/schedule/create":
     post:
@@ -136,6 +207,36 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/ApiString"
+      security: []
+  "/task/daily":
+    get:
+      tags:
+      - 태스크
+      summary: 일일 일정 조회
+      description: 오늘 날짜의 일일 일정을 조회합니다.
+      operationId: getDailyTasks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiTasksByDateResponse"
+      security: []
+  "/task/daily/completed":
+    get:
+      tags:
+      - 태스크
+      summary: 일일 완료 일정 조회
+      description: 오늘 날짜의 일일 완료 일정을 조회합니다.
+      operationId: findDailyCompletedTasks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiTasksByDateResponse"
       security: []
   "/tag/all":
     get:
@@ -258,6 +359,28 @@ paths:
               schema:
                 "$ref": "#/components/schemas/ApiSchedulesByDateResponse"
       security: []
+  "/routine/{id}":
+    get:
+      tags:
+      - 루틴
+      summary: 루틴 조회
+      description: ID로 루틴을 조회합니다.
+      operationId: findRoutineById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiRoutineResponse"
+      security: []
   "/routine/all":
     get:
       tags:
@@ -316,8 +439,46 @@ paths:
               schema:
                 "$ref": "#/components/schemas/ApiString"
       security: []
+  "/routine/{id}/delete":
+    delete:
+      tags:
+      - 루틴
+      summary: 루틴 삭제
+      description: 기존 루틴을 삭제합니다.
+      operationId: deleteRoutine
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiVoid"
+      security: []
 components:
   schemas:
+    ApiString:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+        timestamp:
+          type: string
+        method:
+          type: string
+        path:
+          type: string
+        body:
+          type: string
     ScheduleRequest:
       title: 'SCHEDULE_REQ_01 : 일정 생성/수정 요청'
       required:
@@ -370,22 +531,6 @@ components:
           type: boolean
           description: 중요 여부
           example: false
-    ApiString:
-      type: object
-      properties:
-        statusCode:
-          type: integer
-          format: int32
-        message:
-          type: string
-        timestamp:
-          type: string
-        method:
-          type: string
-        path:
-          type: string
-        body:
-          type: string
     LocalTime:
       type: object
       properties:
@@ -518,6 +663,60 @@ components:
           type: boolean
           description: 중요 여부
           example: false
+    TaskRequest:
+      title: 'TASK_REQ_01 : 일정 생성/수정 요청 (임시)'
+      type: object
+      properties:
+        title:
+          type: string
+          description: 태스크 제목
+          example: 운동하기
+        time:
+          type: string
+          description: 태스크 시간
+          example: '10:00'
+        currentDate:
+          type: string
+          description: 태스크 날짜
+          example: '2023-10-05'
+    ApiTaskResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+        timestamp:
+          type: string
+        method:
+          type: string
+        path:
+          type: string
+        body:
+          "$ref": "#/components/schemas/TaskResponse"
+    TaskResponse:
+      title: 'TASK_RES_01 : 일정 응답 (임시)'
+      type: object
+      properties:
+        id:
+          type: string
+          description: 태스크 ID
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        title:
+          type: string
+          description: 태스크 제목
+          example: 운동하기
+        time:
+          type: string
+          description: 태스크 시간
+          example: '10:00'
+        currentDate:
+          type: string
+          description: 태스크 날짜
+          example: '2023-10-05'
+        completed:
+          type: boolean
     MonthlyMemoRequest:
       title: 'MONTHLY_MEMO_REQ_01 : 월간 메모 아이템 생성 요청'
       required:
@@ -533,6 +732,31 @@ components:
           type: string
           description: 메모 내용
           example: 회의록
+    ApiTasksByDateResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+        timestamp:
+          type: string
+        method:
+          type: string
+        path:
+          type: string
+        body:
+          "$ref": "#/components/schemas/TasksByDateResponse"
+    TasksByDateResponse:
+      type: object
+      properties:
+        date:
+          type: string
+        tasks:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TaskResponse"
     ApiListTagResponse:
       type: object
       properties:
@@ -757,6 +981,22 @@ components:
           description: 월간 메모 아이템 목록
           items:
             "$ref": "#/components/schemas/MonthlyMemoItemResponse"
+    ApiVoid:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+        timestamp:
+          type: string
+        method:
+          type: string
+        path:
+          type: string
+        body:
+          type: object
   securitySchemes:
     Bearer Authentication:
       type: http
