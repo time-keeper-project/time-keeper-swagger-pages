@@ -551,6 +551,27 @@ paths:
               schema:
                 "$ref": "#/components/schemas/ApiString"
       security: []
+  "/task-routine/{id}/delete":
+    delete:
+      tags:
+      - 루틴 일정
+      summary: 루틴 일정 삭제
+      description: 지정한 ID의 루틴 일정을 삭제합니다.
+      operationId: deleteTaskRoutine
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ApiString"
   "/schedule/{id}/delete":
     delete:
       tags:
