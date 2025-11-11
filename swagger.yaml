@@ -312,6 +312,12 @@ paths:
       summary: 일일 완료 일정 조회
       description: 오늘 날짜의 일일 완료 일정을 조회합니다.
       operationId: findDailyCompletedTasks
+      parameters:
+      - name: currentDate
+        in: query
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
