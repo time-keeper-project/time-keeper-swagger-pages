@@ -291,6 +291,12 @@ paths:
       summary: 일일 일정 조회
       description: 오늘 날짜의 일일 일정을 조회합니다.
       operationId: getDailyTasks
+      parameters:
+      - name: currentDate
+        in: query
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
