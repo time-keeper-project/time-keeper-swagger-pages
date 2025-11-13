@@ -734,6 +734,8 @@ components:
       required:
       - endDate
       - endTime
+      - isImportant
+      - isUrgent
       - startDate
       - startTime
       - title
@@ -800,6 +802,13 @@ components:
       example: '08:00'
     RoutineRequest:
       title: 'ROUTINE_REQ_01 : 루틴 생성 요청'
+      required:
+      - endTime
+      - isImportant
+      - isUrgent
+      - recurrenceType
+      - startTime
+      - title
       type: object
       properties:
         title:
@@ -809,7 +818,7 @@ components:
         description:
           type: string
           description: 루틴 설명
-          example: 매일 아침 7시에 운동하기
+          example: '매일 아침 7시에 운동하기 '
         recurrenceType:
           type: string
           description: 반복 유형
