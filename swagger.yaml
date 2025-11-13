@@ -748,7 +748,7 @@ components:
         description:
           type: string
           description: 일정 설명
-          example: 팀 회의에 참석합니다.
+          example: 팀 회의에 참석합니다. || ''
         startDate:
           type: string
           description: 시작 날짜
@@ -768,13 +768,11 @@ components:
         tags:
           type: array
           description: 태그 목록
-          example:
-          - 회의
-          - 업무
+          example: '["회의", "업무"] || []'
           items:
             type: string
             description: 태그 목록
-            example: '["회의","업무"]'
+            example: '["회의", "업무"] || []'
         isUrgent:
           type: boolean
           description: 긴급 여부
@@ -818,7 +816,7 @@ components:
         description:
           type: string
           description: 루틴 설명
-          example: '매일 아침 7시에 운동하기 '
+          example: 매일 아침 7시에 운동하기 || ''
         recurrenceType:
           type: string
           description: 반복 유형
@@ -829,14 +827,11 @@ components:
         recurrenceDetails:
           type: array
           description: 반복 세부사항
-          example:
-          - MON
-          - WED
-          - FRI
+          example: '["MON", "WED", "FRI"] || []'
           items:
             type: string
             description: 반복 세부사항
-            example: '["MON","WED","FRI"]'
+            example: '["MON", "WED", "FRI"] || []'
         startTime:
           "$ref": "#/components/schemas/LocalTime"
         endTime:
@@ -845,7 +840,6 @@ components:
           type: string
           description: 루틴 반복 종료 날짜
           format: date
-          example: '2025-12-31'
         isUrgent:
           type: boolean
           description: 긴급 여부
